@@ -14,9 +14,10 @@ describe('Testa a camada controller de car', () => {
   const req = {} as Request;
   const res = {} as Response;
   before(async () => {
-    sinon.stub(carService, 'create').resolves(carWithIdMock)
-    sinon.stub(carService, 'read').resolves(carsWithIdArray)
-    sinon.stub(carService, 'readOne').resolves(carWithIdMock)
+    sinon.stub(carService, 'create').resolves(carWithIdMock);
+    sinon.stub(carService, 'read').resolves(carsWithIdArray);
+    sinon.stub(carService, 'readOne').resolves(carWithIdMock);
+    sinon.stub(carService, 'update').resolves(carWithIdMock);
     res.status = sinon.stub().returns(res);
     res.json = sinon.stub().returns(res);
   });
@@ -45,7 +46,17 @@ describe('Testa a camada controller de car', () => {
   describe('Busca carro pelo Id', () => {
     it('Sucesso: retorna status 200 e um objeto', async () => {
       req.params = { id: '62cf1fc6498565d94eba52cd' };
-      await carController.read(req, res);
+      await carController.readOne(req, res);
+      expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
+      expect((res.json as sinon.SinonStub).calledWith(carWithIdMock)).to.be.true;
+    });
+  });
+
+  describe('Atualiza carro pelo Id', () => {
+    it('Sucesso: retorna status 200 e um objeto', async () => {
+      req.params = { id: '62cf1fc6498565d94eba52cd' };
+      req.body = carMockWithouId
+      await carController.update(req, res);
       expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
       expect((res.json as sinon.SinonStub).calledWith(carWithIdMock)).to.be.true;
     });
