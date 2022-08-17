@@ -33,6 +33,22 @@ class CarService implements IService<ICar> {
     }
     return car;
   }
+
+  public async update(_id: string, obj: ICar): Promise<ICar> {
+    if (!isValidObjectId(_id)) {
+      throw new Error(ErrorTypes.InvalidMongoId);
+    }
+    const parsed = carSchema.safeParse(obj);
+    if (!parsed.success) {
+      throw parsed.error;
+    } 
+    const car = await this._car.readOne(_id);
+    if (!car) {
+      throw new Error(ErrorTypes.EntityNotFound);
+    }
+    const update = await this._car.update(_id, obj);
+    return update as ICar;
+  }
 }
 
 export default CarService;
