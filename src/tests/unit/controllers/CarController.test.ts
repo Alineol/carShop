@@ -4,7 +4,7 @@ const { expect } = chai;
 import { NextFunction, Request, Response } from 'express';
 import CarModel from '../../../models/carModel'
 import CarService from '../../../services/carService'
-import { carWithIdMock, carMockWithouId } from '../../mocks/carMocks'
+import { carWithIdMock, carMockWithouId, carsWithIdArray } from '../../mocks/carMocks'
 import CarControler from '../../../controllers/carController'
 
 describe('Car controller', () => {
@@ -15,6 +15,7 @@ describe('Car controller', () => {
   const res = {} as Response;
   before(async () => {
     sinon.stub(carService, 'create').resolves(carWithIdMock)
+    sinon.stub(carService, 'read').resolves(carsWithIdArray)
     res.status = sinon.stub().returns(res);
     res.json = sinon.stub().returns(res);
   });
@@ -29,6 +30,14 @@ describe('Car controller', () => {
       await carController.create(req, res);
       expect((res.status as sinon.SinonStub).calledWith(201)).to.be.true;
       expect((res.json as sinon.SinonStub).calledWith(carWithIdMock)).to.be.true;
+    });
+  });
+
+  describe('Busca todos os carros no BD', () => {
+    it('Successo', async () => {
+      await carController.read(req, res);
+      expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
+      expect((res.json as sinon.SinonStub).calledWith(carsWithIdArray)).to.be.true;
     });
   });
 
