@@ -26,7 +26,7 @@ abstract class MongoModel<T> implements IModel<T> {
     return object;
   }
 
-  public async delete(_id: string): Promise<T | null> {
+  public async delete(_id: string): Promise< T | null> {
     await this._model.deleteOne({ _id });
     return null;
   }
