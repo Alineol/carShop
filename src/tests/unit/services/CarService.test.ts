@@ -6,7 +6,7 @@ import CarModel from '../../../models/carModel'
 import CarService from '../../../services/carService'
 import { carWithIdMock, carMockWithouId, carsWithIdArray } from '../../mocks/carMocks'
 
-describe('Car service', () => {
+describe('Testa a camada service de car', () => {
   const carModel = new CarModel();
   const carService = new CarService(carModel)
   before(async () => {
@@ -39,6 +39,33 @@ describe('Car service', () => {
 			const carCreated = await carService.read();
 
 			expect(carCreated).to.be.deep.equal(carsWithIdArray);
+		});
+	});
+
+	describe('Busca carro pelo Id', () => {
+		it('encontra o carro buscado', async () => {
+			sinon.stub(carModel, 'readOne').resolves(carWithIdMock)
+			const car = await carService.readOne('62cf1fc6498565d94eba52cd');
+			sinon.restore()
+
+			expect(car).to.be.deep.equal(carWithIdMock);
+		});
+
+		it('retorna um erro se o Id for inválido', async () => {
+			try {
+				await carService.readOne('123errado');
+			} catch (error: any) {
+				expect(error.message).to.be.eq('InvalidMongoId')
+			}
+		});
+
+		it('retorna um erro se não encontrar um carro', async () => {
+			sinon.stub(carModel, 'readOne').resolves(null)
+			try {
+				await carService.readOne('62cf1fc6498565d94eba52cd');
+			} catch (error: any) {
+				expect(error.message).to.be.eq('EntityNotFound')
+			}
 		});
 	});
 

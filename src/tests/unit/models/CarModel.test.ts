@@ -5,11 +5,12 @@ import { Model } from 'mongoose';
 import { carWithIdMock, carMockWithouId, carsWithIdArray } from '../../mocks/carMocks'
 import CarModel from '../../../models/carModel'
 
-describe('Testa a model de car', () => {
+describe('Testa a model de car com casos de sucesso', () => {
   const carModel = new CarModel()
   before(async () => {
     sinon.stub(Model, 'create').resolves(carWithIdMock)
     sinon.stub(Model, 'find').resolves(carsWithIdArray)
+    sinon.stub(Model, 'findById').resolves(carWithIdMock)
   });
 
   after(()=>{
@@ -24,6 +25,11 @@ describe('Testa a model de car', () => {
     it('Busca todos os carros no bd', async() => {
       const cars = await carModel.read();
       expect (cars).to.be.deep.equal(carsWithIdArray)
+    })
+
+    it('Busca um carro pelo id', async() => {
+      const cars = await carModel.readOne('62cf1fc6498565d94eba52cd');
+      expect (cars).to.be.deep.equal(carWithIdMock)
     })
 
 });
