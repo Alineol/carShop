@@ -49,6 +49,18 @@ class CarService implements IService<ICar> {
     const update = await this._car.update(_id, obj);
     return update as ICar;
   }
+
+  public async delete(_id: string): Promise<null> {
+    if (!isValidObjectId(_id)) {
+      throw new Error(ErrorTypes.InvalidMongoId);
+    }
+    const car = await this._car.readOne(_id);
+    if (!car) {
+      throw new Error(ErrorTypes.EntityNotFound);
+    }
+    const update = await this._car.delete(_id);
+    return update as null;
+  }
 }
 
 export default CarService;
