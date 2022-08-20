@@ -8,4 +8,4 @@ const motorcycleSchema = vehicleZodShema.extend({
 
 export type IMotorcycle = z.infer<typeof motorcycleSchema>;
 
-export { motorcycleSchema as motoSchema };
+export { motorcycleSchema };

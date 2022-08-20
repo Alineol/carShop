@@ -3,6 +3,7 @@ import { ICar } from '../interfaces/ICar';
 import IService from '../interfaces/IService';
 
 export default class CarController {
+  // com o constructor dessa forma, eu crio uma injeção de dependência, pq n estou instanciando dentro da classe, o service vai vir por parâmetro
   constructor(private _service: IService<ICar>) {}
 
   public async create(req: Request & { body: ICar }, res: Response<ICar>) {
