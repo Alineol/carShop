@@ -10,11 +10,21 @@ class CarService implements IService<ICar> {
     this._car = model;
   }
 
-  public async create(obj: ICar): Promise<ICar> {
+  private checkId = (id: string) => {
+    if (!isValidObjectId(id)) {
+      throw new Error(ErrorTypes.InvalidMongoId);
+    }
+  };
+
+  private checkCarBody = (obj: ICar) => {
     const parsed = carSchema.safeParse(obj);
     if (!parsed.success) {
       throw parsed.error;
     }
+  };
+
+  public async create(obj: ICar): Promise<ICar> {
+    this.checkCarBody(obj);
     return this._car.create(obj);
   }
 
@@ -24,9 +34,7 @@ class CarService implements IService<ICar> {
   }
 
   public async readOne(_id: string): Promise<ICar> {
-    if (!isValidObjectId(_id)) {
-      throw new Error(ErrorTypes.InvalidMongoId);
-    }
+    this.checkId(_id);
     const car = await this._car.readOne(_id);
     if (!car) {
       throw new Error(ErrorTypes.EntityNotFound);
@@ -35,29 +43,16 @@ class CarService implements IService<ICar> {
   }
 
   public async update(_id: string, obj: ICar): Promise<ICar> {
-    if (!isValidObjectId(_id)) {
-      throw new Error(ErrorTypes.InvalidMongoId);
-    }
-    const parsed = carSchema.safeParse(obj);
-    if (!parsed.success) {
-      throw parsed.error;
-    } 
-    const car = await this._car.readOne(_id);
-    if (!car) {
-      throw new Error(ErrorTypes.EntityNotFound);
-    }
+    this.checkId(_id);
+    this.checkCarBody(obj); 
+    await this.readOne(_id);
     const update = await this._car.update(_id, obj);
     return update as ICar;
   }
 
   public async delete(_id: string): Promise<null> {
-    if (!isValidObjectId(_id)) {
-      throw new Error(ErrorTypes.InvalidMongoId);
-    }
-    const car = await this._car.readOne(_id);
-    if (!car) {
-      throw new Error(ErrorTypes.EntityNotFound);
-    }
+    this.checkId(_id);
+    await this.readOne(_id);
     const update = await this._car.delete(_id);
     return update as null;
   }
