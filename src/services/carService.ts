@@ -53,8 +53,8 @@ class CarService implements IService<ICar> {
   public async delete(_id: string): Promise<null> {
     this.checkId(_id);
     await this.readOne(_id);
-    const update = await this._car.delete(_id);
-    return update as null;
+    const deleteCar = await this._car.delete(_id);
+    return deleteCar as null;
   }
 }
 
