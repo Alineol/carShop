@@ -18,6 +18,7 @@ describe('Testa a camada controller de car', () => {
     sinon.stub(carService, 'read').resolves(carsWithIdArray);
     sinon.stub(carService, 'readOne').resolves(carWithIdMock);
     sinon.stub(carService, 'update').resolves(carWithIdMock);
+    sinon.stub(carService, 'delete').resolves(null)
     res.status = sinon.stub().returns(res);
     res.json = sinon.stub().returns(res);
   });
@@ -61,5 +62,16 @@ describe('Testa a camada controller de car', () => {
       expect((res.json as sinon.SinonStub).calledWith(carWithIdMock)).to.be.true;
     });
   });
+
+  describe('Deleta carro pelo Id', () => {
+    it('Sucesso: retorna status 204 e um objeto vazio', async () => {
+      req.params = { id: '62cf1fc6498565d94eba52cd' };
+      await carController.delete(req, res);
+      expect((res.status as sinon.SinonStub).calledWith(204)).to.be.true;
+      expect((res.json as sinon.SinonStub).calledWith({})).to.be.true;
+    });
+  });
+
+  
 
 });
