@@ -101,5 +101,30 @@ describe('Testa a camada service de car', () => {
 			sinon.restore()
 		});
 	});
+	describe('Deleta um carro no BD', () => {
+		it('retorna um erro se o Id for inválido', async () => {
+			try {
+				await carService.delete('123errado');
+			} catch (error: any) {
+				expect(error.message).to.be.eq('InvalidMongoId')
+			}
+		});
+		it('retorna um erro se não encontrar um carro', async () => {
+			sinon.stub(carModel, 'readOne').resolves(null)
+			try {
+				await carService.delete('62cf1fc6498565d94eba52cd');
+			} catch (error: any) {
+				expect(error.message).to.be.eq('EntityNotFound')
+			}
+			sinon.restore()
+		});
+		it('deleta com sucesso', async () => {
+			sinon.stub(carModel, 'readOne').resolves(carWithIdMock);
+			sinon.stub(carModel, 'delete').resolves(null)
+			const car = await carService.delete('62cf1fc6498565d94eba52cd');
+			expect(car).to.be.deep.equal(null);
+			sinon.restore()
+		});
+	});
 
 });
